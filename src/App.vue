@@ -1,4 +1,5 @@
 <template>
+  <!-- 根节点 -->
   <div>
     <!-- 顶部的头 -->
     <div class="header">
@@ -38,9 +39,10 @@
           <div id="menu2" class="nav-box menuhd">
             <ul>
               <li class="index">
-                <a href="#" class="">
+                <!-- 路由跳转的连接 -->
+                <router-link to="/index">
                   <span class="out" style="top: 0px;">首页</span>
-                </a>
+                </router-link>
               </li>
               <li class="news">
                 <a href="#" class="">
@@ -80,6 +82,8 @@
         </div>
       </div>
     </div>
+    <!-- 视图的出口 -->
+    <router-view></router-view>
     <!-- 底部的尾巴 -->
     <div class="footer">
       <div class="section">
@@ -124,7 +128,7 @@ export default {
   name: "container"
 };
 // 插件的代码 为a标签增加两个用于动画的span
-$(document).ready(function() {
+$(function() {
   $("#menu2 li a").wrapInner('<span class="out"></span>');
   $("#menu2 li a").each(function() {
     $('<span class="over">' + $(this).text() + "</span>").appendTo(this);
@@ -159,5 +163,9 @@ $(document).ready(function() {
 /* 覆盖蓝色的背景 也可以直接修改 插件的样式  */
 /* #menu2 {
   background-image: none;
+} */
+/* 覆盖body的背景色 或者直接修改 插件中的body背景色 */
+/* body{
+  background-color: transparent;
 } */
 </style>
