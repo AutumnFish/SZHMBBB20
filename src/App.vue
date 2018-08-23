@@ -63,7 +63,7 @@
                 </a>
               </li>
               <li class="goods">
-                <a href="" class="router-link-exact-active ">
+                <a href="" class="">
                   <span class="out" style="top: 0px;">购物商城</span>
                 </a>
               </li>
@@ -116,12 +116,48 @@
 </template>
 
 <script>
+  // 导入jQuery 方便后续代码执行
+import $ from "jquery";
 export default {
-  name: "app"
+  // 修改之后 devtool插件的控制台中 会有不同的名字 更利于我们查找元素
+  // 传送门:https://cn.vuejs.org/v2/api/#name
+  name: "container"
 };
+// 插件的代码 为a标签增加两个用于动画的span
+$(document).ready(function() {
+  $("#menu2 li a").wrapInner('<span class="out"></span>');
+  $("#menu2 li a").each(function() {
+    $('<span class="over">' + $(this).text() + "</span>").appendTo(this);
+  });
+
+  $("#menu2 li a").hover(
+    function() {
+      $(".out", this)
+        .stop()
+        .animate({ top: "48px" }, 300); // move down - hide
+      $(".over", this)
+        .stop()
+        .animate({ top: "0px" }, 300); // move down - show
+    },
+    function() {
+      $(".out", this)
+        .stop()
+        .animate({ top: "0px" }, 300); // move up - show
+      $(".over", this)
+        .stop()
+        .animate({ top: "-48px" }, 300); // move up - hide
+    }
+  );
+});
 </script>
 
-<style>
-  /* 引入样式 */
-  @import url('./assets/statics/site/css/style.css');
+<style >
+/* 引入样式 */
+@import url("./assets/statics/site/css/style.css");
+/* 导入 jq动画插件的样式 */
+@import url("./assets/lib/css/style.css");
+/* 覆盖蓝色的背景 也可以直接修改 插件的样式  */
+/* #menu2 {
+  background-image: none;
+} */
 </style>
