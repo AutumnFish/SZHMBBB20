@@ -13,25 +13,29 @@
                 <div class="wrap-box">
                     <div class="left-925">
                         <div class="goods-box clearfix">
-                            <div class="pic-box"></div>
+                            <div class="pic-box">
+                                <!-- 放大镜插件 -->
+                                <!-- <ProductZoomer  /> 怪不得 55个赞 -->
+                                <ProductZoomer :base-images="images" :base-zoomer-options="zoomerOptions"></ProductZoomer>
+                            </div>
                             <div class="goods-spec">
-                                <h1>华为（HUAWEI）荣耀6Plus 16G双4G版</h1>
-                                <p class="subtitle">双800万摄像头，八核，安卓智能手机）荣耀6plus</p>
+                                <h1>{{goodsinfo.title}}</h1>
+                                <p class="subtitle">{{goodsinfo.sub_title}}</p>
                                 <div class="spec-box">
                                     <dl>
                                         <dt>货号</dt>
-                                        <dd id="commodityGoodsNo">SD9102356032</dd>
+                                        <dd id="commodityGoodsNo">{{goodsinfo.goods_no}}</dd>
                                     </dl>
                                     <dl>
                                         <dt>市场价</dt>
                                         <dd>
-                                            <s id="commodityMarketPrice">¥2499</s>
+                                            <s id="commodityMarketPrice">¥{{goodsinfo.market_price}}</s>
                                         </dd>
                                     </dl>
                                     <dl>
                                         <dt>销售价</dt>
                                         <dd>
-                                            <em id="commoditySellPrice" class="price">¥2195</em>
+                                            <em id="commoditySellPrice" class="price">¥{{goodsinfo.sell_price}}</em>
                                         </dd>
                                     </dl>
                                 </div>
@@ -40,25 +44,12 @@
                                         <dt>购买数量</dt>
                                         <dd>
                                             <div class="stock-box">
-                                                <div class="el-input-number el-input-number--small">
-                                                    <span role="button" class="el-input-number__decrease is-disabled">
-                                                        <i class="el-icon-minus"></i>
-                                                    </span>
-                                                    <span role="button" class="el-input-number__increase">
-                                                        <i class="el-icon-plus"></i>
-                                                    </span>
-                                                    <div class="el-input el-input--small">
-                                                        <!---->
-                                                        <input autocomplete="off" size="small" type="text" rows="2" max="60" min="1" validateevent="true" class="el-input__inner" role="spinbutton" aria-valuemax="60" aria-valuemin="1" aria-valuenow="1" aria-disabled="false">
-                                                        <!---->
-                                                        <!---->
-                                                        <!---->
-                                                    </div>
-                                                </div>
+                                                <!-- 使用element ui的 计数器替换 -->
+                                                <el-input-number v-model="buyCount" @change="buyCountChange" :min="0" :max="goodsinfo.stock_quantity" size="mini" label="描述文字"></el-input-number>
                                             </div>
                                             <span class="stock-txt">
                                                 库存
-                                                <em id="commodityStockNum">60</em>件
+                                                <em id="commodityStockNum">{{goodsinfo.stock_quantity}}</em>件
                                             </span>
                                         </dd>
                                     </dl>
@@ -74,20 +65,25 @@
                             </div>
                         </div>
                         <div id="goodsTabs" class="goods-tab bg-wrap">
-                            <div id="tabHead" class="tab-head" style="position: static; top: 517px; width: 925px;">
-                                <ul>
-                                    <li>
-                                        <a href="javascript:;" class="selected">商品介绍</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:;">商品评论</a>
-                                    </li>
-                                </ul>
+                            <!-- tab 区域 -->
+                            <!-- iView的 图钉组件 -->
+                            <Affix>
+                                <div id="tabHead" class="tab-head" style="position: static; top: 517px; width: 925px;">
+                                    <ul>
+                                        <li>
+                                            <a href="javascript:;" @click="showDiscuss=false" :class="{selected:showDiscuss==false}">商品介绍</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;" @click="showDiscuss=true" :class="{selected:showDiscuss==true}">商品评论</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </Affix>
+
+                            <!-- 内容区域 -->
+                            <div class="tab-content entry" v-show="showDiscuss==false" v-html="goodsinfo.content">
                             </div>
-                            <div class="tab-content entry" style="display: block;">
-                                内容
-                            </div>
-                            <div class="tab-content" style="display: block;">
+                            <div class="tab-content" v-show="showDiscuss==true">
                                 <div class="comment-box">
                                     <div id="commentForm" name="commentForm" class="form-box">
                                         <div class="avatar-box">
@@ -165,12 +161,20 @@
                 </div>
             </div>
         </div>
+        <!-- 回到顶部 iview的自定义组件 -->
+        <BackTop :height="100" :bottom="200">
+            <div class="top">返回顶端</div>
+        </BackTop>
     </div>
+
 </template>
 
 <script>
 // 引入 axios 不是插件 不需要use
 import axios from "axios";
+
+// 转包 导包
+import ProductZoomer from 'vue-product-zoomer';
 
 export default {
   // 姓名
@@ -180,8 +184,32 @@ export default {
       productId: undefined, // id
       goodsinfo: {}, // 商品信息
       hotgoodslist: [], // 热卖列表
-      imglist: [] // 图片列表
+      imglist: [], // 图片列表
+      buyCount: 0, // 购买数量
+      showDiscuss: false, // 是否显示评论 默认为false  默认显示 商品内容,
+      // 放大镜设置
+      zoomerOptions: {
+        'zoomFactor': 3,
+        'pane': 'pane',
+        'hoverDelay': 300,
+        'namespace': 'zoomer',
+        'move_by_click':false,
+        'scroll_items': 7,
+        'choosed_thumb_border_color': "#dd2c00"
+      },
+      // 轮播图用的图片 默认的数据格式 不支持
+      // 这里的数据 需要在接口调用完毕之后 才能够获取
+      images:{
+          normal_size:[
+             
+          ]
+      }
     };
+  },
+  methods: {
+    buyCountChange() {
+      console.log("变啦!!");
+    }
   },
   // 生命周期函数
   // 当前这个Vue组件还没有实例化出来 那些data methods 都是没有的
@@ -205,12 +233,43 @@ export default {
         this.goodsinfo = response.data.message.goodsinfo;
         this.hotgoodslist = response.data.message.hotgoodslist;
         this.imglist = response.data.message.imglist;
+        
+        // 处理 放大镜数据
+        let temArr = [];
+        // 循环处理数据
+        this.imglist.forEach((v,i)=>{
+            temArr.push({
+                id:v.id,
+                url:v.original_path
+            })
+        })
+        // 临时数组
+        this.images.normal_size = temArr
+
       });
+  },
+  // 注册放大镜组件
+  components: {
+    ProductZoomer
   }
 };
 </script>
 
 <style>
+/* 设置 内容区域 图片样式 */
+.tab-content img {
+  width: 100%;
+  /* 去除图片底部的 间隙 */
+  display: block;
+}
+/* iview的回到顶部 */
+.top {
+  padding: 10px;
+  background: rgba(0, 153, 229, 0.7);
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+}
 </style>
 
 

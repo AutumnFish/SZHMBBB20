@@ -14,6 +14,13 @@ import 'element-ui/lib/theme-chalk/index.css';
 // 记得要use一下 才会把Elementui中的内容注册到Vue上面
 Vue.use(ElementUI);
 
+// 导入iView
+import iView from 'iview';
+import 'iview/dist/styles/iview.css';
+// 记得use一下
+Vue.use(iView);
+
+
 // 注册VueRouter(类似于Express的中间件语法)
 // 传送门:https://router.vuejs.org/zh/guide/#html JavaScript分类的第0行
 Vue.use(VueRouter);
