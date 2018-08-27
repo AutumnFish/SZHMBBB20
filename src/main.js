@@ -20,6 +20,18 @@ import 'iview/dist/styles/iview.css';
 // 记得use一下
 Vue.use(iView);
 
+// 全局导入axios
+import axios from 'axios';
+// 配置全局基地址
+axios.defaults.baseURL = 'http://47.106.148.205:8899';
+// 增加到Vue的原型中
+Vue.prototype.$axios = axios;
+
+
+// 导入放大镜
+import ProductZoomer from 'vue-product-zoomer';
+Vue.use(ProductZoomer);
+
 
 // 注册VueRouter(类似于Express的中间件语法)
 // 传送门:https://router.vuejs.org/zh/guide/#html JavaScript分类的第0行

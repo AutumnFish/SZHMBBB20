@@ -111,8 +111,8 @@
     </div>
 </template>
 <script>
-// 导入 axios
-import axios from "axios";
+// 导入 this.$axios
+
 
 // 引入 moment.js
 // import moment from "moment";
@@ -138,8 +138,8 @@ export default {
   // 创建完毕
   created() {
     // 网络数据获取 顶部数据
-    axios
-      .get("http://47.106.148.205:8899/site/goods/gettopdata/goods")
+    this.$axios
+      .get("site/goods/gettopdata/goods")
       .then(response => {
         // 把获取到的数据 设置给 当前这个组件的 data属性
         this.catelist = response.data.message.catelist;
@@ -150,8 +150,8 @@ export default {
       });
 
     // 网络数据获取 底部的分类数据
-    axios
-      .get("http://47.106.148.205:8899/site/goods/getgoodsgroup")
+    this.$axios
+      .get("site/goods/getgoodsgroup")
       .then(response => {
         //   console.log(response);
         this.groupDate = response.data.message;
