@@ -24,11 +24,14 @@
               <a>退出</a>
               <strong>|</strong>
             </span>
-            <a href="" class="">
+            <!-- <a href="" class=""> -->
+            <router-link to="/cart">
               <i class="iconfont icon-cart"></i>购物车(
               <span id="shoppingCartCount">
-                <span>4</span>
-              </span>)</a>
+                <span>{{$store.getters.goodsCount}}</span>
+              </span>)
+              <!-- </a> -->
+            </router-link>
           </div>
         </div>
       </div>
@@ -120,7 +123,7 @@
 </template>
 
 <script>
-  // 导入jQuery 方便后续代码执行
+// 导入jQuery 方便后续代码执行
 import $ from "jquery";
 export default {
   // 修改之后 devtool插件的控制台中 会有不同的名字 更利于我们查找元素

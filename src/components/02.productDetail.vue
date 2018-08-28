@@ -161,7 +161,7 @@
             <div class="top">返回顶端</div>
         </BackTop>
         <!-- 移动的小图片 -->
-        <img v-if="imglist.length!=0" class="moveImg" :src="imglist[0].original_path" alt="">
+        <img v-if="imglist.length!=0" class="moveImg" style="display:none" :src="imglist[0].original_path" alt="">
 
     </div>
 
@@ -302,20 +302,35 @@ export default {
     // 加入购物车的逻辑
     // 使用jq来实现
     cartAdd() {
+      //   为0提示
+      if (this.buyCount == 0) {
+        this.$Message.error("哥们,买点呗,不买怎么加入购物车呀 (づ￣ 3￣)づ");
+        return;
+      }
       // 获取加入购物车位置
-      let cartOffset = $('.add').offset();
-      console.log(cartOffset);
+      let cartOffset = $(".add").offset();
+      //   console.log(cartOffset);
       // 获取购物车位置
-      let targetOffset = $('.icon-cart').offset();
-      console.log(targetOffset);
+      let targetOffset = $(".icon-cart").offset();
+      //   console.log(targetOffset);
       // 使用动画的方式 移动图片
       // 移动到按钮位置 显示出来 动画移动到目标位置
-      $(".moveImg").show().css(cartOffset).animate(targetOffset,function(){
-          $(this).hide();
+      $(".moveImg")
+        .stop()
+        .show()
+        .addClass("move")
+        .css(cartOffset)
+        .animate(targetOffset, 1000, function() {
+          $(this)
+            .hide()
+            .removeClass("move");
+        });
+      
+      // 直接修改购物车商品数据
+      this.$store.commit("addGoods", {
+        goodId: this.productId,
+        goodNum: this.buyCount
       });
-      // 动画完结以后
-      // 	隐藏图片
-      // 	增加购物车中的显示内容
     }
   },
   // 生命周期函数
@@ -386,13 +401,14 @@ export default {
 .moveImg {
   position: absolute;
   width: 50px;
-  display: none;
+  //   display: none;
   // top:0;
   // left:0;
 }
-.moveImg.move{
-    transition: all 1s;
-    transform: rotate(720deg);
+.moveImg.move {
+  transition: transform 1s, opacity 1s;
+  opacity: 0.5;
+  transform: scale(0.2) rotate(7200deg);
 }
 </style>
 
