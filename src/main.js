@@ -13,6 +13,8 @@ import ShoppingCart from './components/03.shoppingCart.vue';
 import Login from './components/04.login.vue';
 // 导入订单组件
 import Order from './components/05.order.vue';
+// 导入支付订单组件
+import PayOrder from './components/06.payOrder.vue';
 
 // 导入 elementui
 import ElementUI from 'element-ui';
@@ -189,6 +191,16 @@ let routes = [
       // panduan:true
     }
   },
+  // 订单支付
+  {
+    path: '/payOrder/:orderid',
+    component: PayOrder,
+    // 路由元信息 可以随意加  订单支付页 也必须登陆才可以访问
+    meta: {
+      checkLogin: true
+    }
+  },
+  
 ]
 
 // 实例化路由对象
