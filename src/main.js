@@ -9,6 +9,8 @@ import Index from './components/01.index.vue';
 import Detail from './components/02.productDetail.vue';
 // 导入购物车的组件
 import ShoppingCart from './components/03.shoppingCart.vue';
+// 导入登陆组件
+import Login from './components/04.login.vue';
 
 // 导入 elementui
 import ElementUI from 'element-ui';
@@ -75,7 +77,9 @@ const store = new Vuex.Store({
   state: {
     // count: 998
     // 尝试读取数据 有使用读取的数据 没有 使用 空对象 [Object object]
-    cartDate: JSON.parse(window.localStorage.getItem('goodKey')) || {}
+    cartDate: JSON.parse(window.localStorage.getItem('goodKey')) || {},
+    // 是否登陆
+    isLogin:false
   },
   // 这个是暴露的修改方法
   mutations: {
@@ -110,6 +114,10 @@ const store = new Vuex.Store({
       // delete 删除的属性不会触发视图更新
       // 需要调用Vue.delete方法才可以
       Vue.delete(state.cartDate,goodId);
+    },
+    // 修改登陆状态
+    changeLogin(state,isLogin){
+      state.isLogin = isLogin;
     }
   },
   // getters vuex的计算属性
@@ -161,7 +169,12 @@ let routes = [
   {
     path: '/cart',
     component: ShoppingCart,
-  }
+  },
+  // 购物车路由
+  {
+    path: '/login',
+    component: Login,
+  },
 ]
 
 // 实例化路由对象

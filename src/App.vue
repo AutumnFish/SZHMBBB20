@@ -12,16 +12,18 @@
             <a target="_blank" href="#"></a>
           </div>
           <div id="menu" class="right-box">
-            <span style="display: none;">
-              <a href="" class="">登录</a>
+            <!-- 未登录显示 -->
+            <span v-show="$store.state.isLogin==false">
+              <router-link to="/login">登录</router-link>
               <strong>|</strong>
               <a href="" class="">注册</a>
               <strong>|</strong>
             </span>
-            <span>
+            <!-- 登陆显示 -->
+            <span v-show="$store.state.isLogin==true">
               <a href="" class="">会员中心</a>
               <strong>|</strong>
-              <a>退出</a>
+              <a @click="logout">退出</a>
               <strong>|</strong>
             </span>
             <!-- <a href="" class=""> -->
@@ -128,7 +130,24 @@ import $ from "jquery";
 export default {
   // 修改之后 devtool插件的控制台中 会有不同的名字 更利于我们查找元素
   // 传送门:https://cn.vuejs.org/v2/api/#name
-  name: "container"
+  name: "container",
+  methods: {
+    logout() {
+      // 调用登出接口
+      this.$axios.get("site/account/logout").then(response => {
+        // console.log(response);
+        if (response.data.status == 0) {
+          // 提示用户
+          this.$Notice.success({
+            title: "通知",
+            desc: response.data.message
+          });
+          // 修改vuex的状态
+          this.$store.commit('changeLogin',false);
+        }
+      });
+    }
+  }
 };
 // 插件的代码 为a标签增加两个用于动画的span
 $(function() {
