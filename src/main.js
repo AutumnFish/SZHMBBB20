@@ -11,6 +11,8 @@ import Detail from './components/02.productDetail.vue';
 import ShoppingCart from './components/03.shoppingCart.vue';
 // 导入登陆组件
 import Login from './components/04.login.vue';
+// 导入订单组件
+import Order from './components/05.order.vue';
 
 // 导入 elementui
 import ElementUI from 'element-ui';
@@ -30,6 +32,8 @@ import axios from 'axios';
 // 一般来说接口 是在一台服务器上的 一系列地址
 // 抽取出来还有一个好处 如果服务器更换地址 只需要调整一个位置
 axios.defaults.baseURL = 'http://47.106.148.205:8899';
+// 增加设置 跨域带cookie
+axios.defaults.withCredentials = true;
 // 增加到Vue的原型中 学习了 iView this.$Message
 Vue.prototype.$axios = axios;
 
@@ -79,7 +83,7 @@ const store = new Vuex.Store({
     // 尝试读取数据 有使用读取的数据 没有 使用 空对象 [Object object]
     cartDate: JSON.parse(window.localStorage.getItem('goodKey')) || {},
     // 是否登陆
-    isLogin:false
+    isLogin: false
   },
   // 这个是暴露的修改方法
   mutations: {
@@ -101,22 +105,22 @@ const store = new Vuex.Store({
     // 额外的增加一个修改的方法
     // 逻辑是 直接把传入的 数量 替换掉 默认的数量
     // 格式约定 格式{goodId:商品id,goodNum:数量}
-    updateGoodsNum(state,goodInfo){
+    updateGoodsNum(state, goodInfo) {
       // 直接替换即可
       state.cartDate[goodInfo.goodId] = goodInfo.goodNum;
     },
     // 额外的增加一个删除的方法
     // goodId就是 商品的id
-    deleteGoods(state,goodId){
+    deleteGoods(state, goodId) {
       // 如何删除对象中的属性
       // delete 删除对象中的属性
       // delete state.cartDate[goodId];
       // delete 删除的属性不会触发视图更新
       // 需要调用Vue.delete方法才可以
-      Vue.delete(state.cartDate,goodId);
+      Vue.delete(state.cartDate, goodId);
     },
     // 修改登陆状态
-    changeLogin(state,isLogin){
+    changeLogin(state, isLogin) {
       state.isLogin = isLogin;
     }
   },
@@ -127,8 +131,8 @@ const store = new Vuex.Store({
       let num = 0;
       //  循环数据对象
       for (const key in state.cartDate) {
-          // console.log(key);
-          num +=state.cartDate[key]
+        // console.log(key);
+        num += state.cartDate[key]
       }
       // 累加总数
       // 返回总数
@@ -138,8 +142,8 @@ const store = new Vuex.Store({
 })
 
 // 浏览器页面关闭(刷新时)保存到localStorage中
-window.onbeforeunload = function(){
-  window.localStorage.setItem('goodKey',JSON.stringify(store.state.cartDate))
+window.onbeforeunload = function () {
+  window.localStorage.setItem('goodKey', JSON.stringify(store.state.cartDate))
   // window.localStorage.setItem('goodKey',JSON.stringify(cartDate))
 }
 
@@ -170,10 +174,20 @@ let routes = [
     path: '/cart',
     component: ShoppingCart,
   },
-  // 购物车路由
+  // 登录
   {
     path: '/login',
     component: Login,
+  },
+  // 订单 接收数据
+  {
+    path: '/order/:ids',
+    component: Order,
+    // 路由元信息 可以随意加 
+    meta: {
+      checkLogin: true
+      // panduan:true
+    }
   },
 ]
 
@@ -182,6 +196,28 @@ let routes = [
 // 所以我们才可以用这种快速赋值
 let router = new VueRouter({
   routes: routes
+})
+
+// 导航守卫
+router.beforeEach((to, from, next) => {
+  // 特殊情况登陆判断
+  // console.log(to);
+  if (to.meta.checkLogin == true) {
+    // 登陆状态判断
+    axios.get('site/account/islogin').then(response => {
+      // console.log(response);
+      if (response.data.code == 'logined') {
+        // 登录了放行
+        next()
+      } else {
+        // 没有登陆 去登录页
+        next('/login')
+      }
+    })
+  } else {
+    // 不阻止
+    next();
+  }
 })
 
 // 挂在到 Vue示例上面
@@ -196,5 +232,14 @@ new Vue({
   // 路由对象
   router,
   // 仓库对象 属性的名字 叫做 store
-  store
+  store,
+  // 最外层的 Vue容器的生命周期中判断登陆
+  beforeCreate(){
+    axios.get('site/account/islogin').then(response=>{
+      if(response.data.code=='logined'){
+        // 修改vuex的状态
+        store.commit('changeLogin',true);
+      }
+    })
+  }
 }).$mount('#app')

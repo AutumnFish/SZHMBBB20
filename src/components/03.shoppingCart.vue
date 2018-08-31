@@ -114,7 +114,7 @@
                     <div class="cart-foot clearfix">
                         <div class="right-box">
                             <button class="button" onclick="javascript:location.href='/index.html';">继续购物</button>
-                            <button class="submit" onclick="formSubmit(this, '/', '/shopping.html');">立即结算</button>
+                            <button class="submit" @click="toOrder">立即结算</button>
                         </div>
                     </div>
                     <!--购物车底部-->
@@ -216,6 +216,20 @@ export default {
           this.message.splice(index, 1);
         }
       });
+    },
+    // 去订单页
+    toOrder(){
+        // 数据拼接
+        let ids = '';
+        this.message.forEach(v=>{
+            if(v.selected==true){
+                ids+=v.id;
+                ids+=',';
+            }
+        })
+        ids=ids.slice(0,-1);
+        this.$router.push('/order/'+ids);
+        // 判断让 导航守卫 (main.js中)
     }
   }
 };
