@@ -15,6 +15,14 @@ import Login from './components/04.login.vue';
 import Order from './components/05.order.vue';
 // 导入支付订单组件
 import PayOrder from './components/06.payOrder.vue';
+// 导入支付成功组件
+import PaySuccess from './components/07.paySuccess.vue';
+// 导入会员中心
+import VipCenter from './components/08.vipCenter.vue';
+// 导入订单列表组件
+import OrderList from './components/09.orderList.vue';
+// 导入支付订单详情组件 
+import OrderDetail from './components/10.orderDetail.vue';
 
 // 导入 elementui
 import ElementUI from 'element-ui';
@@ -68,9 +76,17 @@ Vue.use(VueLazyload, {
 // 注册全局过滤器
 // 依赖于 moment.js
 import moment from 'moment';
-// 注册
-Vue.filter('filterDate', function (val) {
-  return moment(val).format("YYYY年MM月DD日");
+// 注册 这个过滤器 只能格式化固定的内容
+// 可以接受参数
+Vue.filter('filterDate', function (val,formatStr) {
+  console.log(formatStr);
+  // 如果你传入了格式化字符串 就用 传入的
+  if(formatStr!=undefined){
+    return moment(val).format(formatStr);
+  }else{
+    // 没有传入个格式化字符串 就用 默认的
+    return moment(val).format("YYYY年MM月DD日");
+  }
 })
 
 // 整合 Vuex 统一进行数据管理
@@ -200,6 +216,42 @@ let routes = [
       checkLogin: true
     }
   },
+  // 订单支付
+  {
+    path: '/paySuccess/:id',
+    component: PaySuccess,
+    // 路由元信息 可以随意加  订单支付页 也必须登陆才可以访问
+    meta: {
+      checkLogin: true
+    }
+  },
+  // 会员中心
+  {
+    path: '/vipCenter',
+    component: VipCenter,
+    // 路由元信息 可以随意加  订单支付页 也必须登陆才可以访问
+    meta: {
+      checkLogin: true
+    }
+  },
+  // 订单中心
+  {
+    path: '/orderList',
+    component: OrderList,
+    // 路由元信息 可以随意加  订单支付页 也必须登陆才可以访问
+    meta: {
+      checkLogin: true
+    }
+  },
+  // 支付订单详情
+  {
+    path: '/orderDetail/:id',
+    component: OrderDetail,
+    // 路由元信息 可以随意加  订单支付页 也必须登陆才可以访问
+    meta: {
+      checkLogin: true
+    }
+  }
   
 ]
 
