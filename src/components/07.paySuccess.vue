@@ -43,7 +43,8 @@ export default {
     name:'paySuccess',
     data:function(){
         return {
-            time:5
+            time:5,
+            interId:0
         }
     },
     // 创建之前 
@@ -57,12 +58,12 @@ export default {
     // 渲出来之后
     mounted() {
         // 定时器 间隔 跳转
-        let interId = setInterval(()=>{
+        this.interId = setInterval(()=>{
             // 组件中的
             this.time--;
             if(this.time==0){
                 // 清除定时器
-                clearInterval(interId);
+                clearInterval(this.interId);
                 // 跳转页面
                 // this.$router.push('/VipCenter');
                 // 返回上一页 上上一页
@@ -72,6 +73,11 @@ export default {
                 this.$router.push('/orderDetail/'+this.$route.params.id);
             }
         },1000)
+    },
+    // 生命周期函数
+    destroyed() {
+        // console.log('我被销毁啦+paySuccess');
+        clearInterval(this.interId)
     },
 };
 </script>

@@ -73,7 +73,7 @@
                                 <div id="container2">
                                     <!-- <img src="../assets/img/code.png" alt=""> -->
                                     <!-- 支付接口 后台给你 -->
-                                    <qrcode :value="'http://47.106.148.205:8899/site/validate/pay/alipay/'+$route.params.orderid" :options="{ size: 200 }"></qrcode>
+                                    <qrcode :value="'http://111.230.232.110:8899/site/validate/pay/alipay/'+$route.params.orderid" :options="{ size: 200 }"></qrcode>
 
                                 </div>
                             </div>
@@ -95,7 +95,9 @@ export default {
   name: "payOrder",
   data: function() {
     return {
-      orderInfo: {}
+      orderInfo: {},
+      // 定时器id
+      interId:0
     };
   },
   created() {
@@ -106,7 +108,7 @@ export default {
         this.orderInfo = response.data.message[0];
       });
     // 用定时器的方式 轮询 查询是否支付订单
-    let interId = setInterval(() => {
+    this.interId = setInterval(() => {
       this.$axios
         .get(`site/validate/order/getorder/${this.$route.params.orderid}`)
         .then(response => {
@@ -121,7 +123,7 @@ export default {
               this.$router.push("/paySuccess/"+this.$route.params.orderid);
             }, 500);
             // 跳转到下一页
-            clearInterval(interId);
+            clearInterval(this.interId);
           } else {
             // 没有成功
           }
@@ -139,11 +141,17 @@ export default {
       //   直接跳转到这个页面 进行支付 不是用axios调用接口
       // 直接打开一个新的窗口 完成支付
       window.open(
-        "http://47.106.148.205:8899/site/validate/pay/alipay/" +
+        "http://111.230.232.110:8899/site/validate/pay/alipay/" +
           this.$route.params.orderid
       );
     }
-  }
+  },
+  // 生命周期函数 销毁
+  destroyed() {
+    //   console.log('销毁啦+payOrder');
+    // 在这里 清除定时器即可
+    clearInterval(this.interId);
+  },
 };
 </script>
 <style>

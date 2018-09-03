@@ -21,7 +21,7 @@
             </span>
             <!-- 登陆显示 -->
             <span v-show="$store.state.isLogin==true">
-             <router-link to="/vipCenter">会员中心</router-link> 
+              <router-link to="/vipCenter">会员中心</router-link>
               <strong>|</strong>
               <a @click="logout">退出</a>
               <strong>|</strong>
@@ -143,7 +143,7 @@ export default {
             desc: response.data.message
           });
           // 修改vuex的状态
-          this.$store.commit('changeLogin',false);
+          this.$store.commit("changeLogin", false);
         }
       });
     }
@@ -190,4 +190,8 @@ $(function() {
 /* body{
   background-color: transparent;
 } */
+/* 标题区域 */
+.sub-tit {
+  padding-top: 0;
+}
 </style>

@@ -90,7 +90,7 @@
                                                 传送门
                                             在后面增加自定义的参数
                                          -->
-                                        <el-input-number size="mini" :min='0' v-model="item.buycount" @change="numChange($event,item.id)"></el-input-number>
+                                        <el-input-number size="mini" :min='0' :max="item.max" v-model="item.buycount" @change="numChange($event,item.id)"></el-input-number>
                                     </td>
                                     <td>{{item.buycount*item.sell_price}}</td>
                                     <!-- 使用element-ui的按钮 传入 id -->
@@ -157,6 +157,13 @@ export default {
         v.buycount = cartDate[v.id];
         // 设置是否被选中
         v.selected = true;
+        // 可以获取到 当前这个商品的 id
+        // 带着这个id 去调用接口 即可
+        this.$axios.get(`site/goods/getgoodsinfo/${v.id}`).then(resSon=>{
+            // console.log(resSon);
+            // 把库存 保存到 当前循环的那个对象中即可
+            v.max = resSon.data.message.goodsinfo.stock_quantity
+        })
       });
       // 再赋值给 message即可(后台真懒!!)
       this.message = response.data.message;
@@ -199,6 +206,15 @@ export default {
     numChange(num, id) {
       //   console.log(num,id);
       // 调用仓库的方法 (提交载荷)
+      // 提交载荷的时候 判断数量是否 超过了 最大值
+      this.message.forEach(v=>{
+          if(v.id==id){
+              if(num>v.max){
+                  num = v.max;
+              }
+          }
+      })
+      // 上面已经修正了 num的数量
       this.$store.commit("updateGoodsNum", {
         goodId: id,
         goodNum: num
